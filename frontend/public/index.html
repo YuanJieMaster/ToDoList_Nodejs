@@ -1,0 +1,83 @@
+<!--<html>-->
+<!--<body>-->
+<!--<form action="http://127.0.0.1:8081/process_post" method="POST">-->
+<!--    First Name: <input type="text" name="first_name">  <br>-->
+
+<!--    Last Name: <input type="text" name="last_name">-->
+<!--    <input type="submit" value="Submit">-->
+<!--</form>-->
+
+<!--<h3>文件上传：</h3>-->
+<!--选择一个文件上传: <br />-->
+<!--<form action="/file_upload" method="post" enctype="multipart/form-data">-->
+<!--    <input type="file" name="image" size="50" />-->
+<!--    <br />-->
+<!--    <input type="submit" value="上传文件" />-->
+<!--</form>-->
+<!--</body>-->
+<!--</html>-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>任务管理器</title>
+    <link rel="stylesheet" href="styles/style.css">
+</head>
+<body>
+<script src="scripts/script.js"></script>
+<div class="container">
+    <header>
+        <input type="text" id="search-bar" placeholder="输入搜索关键词">
+        <button id="search-button">搜索</button>
+        <select id="filter-tasks">
+            <option value="all">全部任务</option>
+            <option value="incomplete">未完成任务</option>
+            <option value="complete">已完成任务</option>
+        </select>
+        <select id="sort-tasks">
+            <option value="time">按时间排序</option>
+            <option value="priority">按优先级排序</option>
+        </select>
+    </header>
+    <main>
+        <ul id="task-list">
+            <!-- 动态生成任务列表 -->
+        </ul>
+        <button id="create-task-button">+</button>
+    </main>
+</div>
+
+<!-- 创建任务模态框 -->
+<div id="create-task-modal" class="modal">
+    <div class="modal-content">
+        <h2>创建任务</h2>
+        <label for="task-title">任务标题</label>
+        <input type="text" id="task-title">
+        <label for="task-description">任务描述</label>
+        <textarea id="task-description"></textarea>
+        <label for="task-deadline">截止日期</label>
+        <input type="date" id="task-deadline">
+        <label for="task-priority">选择优先级</label>
+        <select id="task-priority">
+            <option value="low">低</option>
+            <option value="medium">中</option>
+            <option value="high">高</option>
+        </select>
+        <button id="save-task-button">保存</button>
+        <button id="cancel-task-button">取消</button>
+    </div>
+</div>
+
+<!-- 删除确认框 -->
+<div id="delete-modal" class="modal">
+    <div class="modal-content">
+        <p>您确定要删除该任务记录吗？此操作无法撤销。</p>
+        <button id="confirm-delete-button">确认删除</button>
+        <button id="cancel-delete-button">取消</button>
+    </div>
+</div>
+<script src="script.js"></script>
+</body>
+</html>
