@@ -12,6 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let tasks = [];
     let taskToDelete = null;
+    let taskToEdit = null;  // 新增用于记录当前编辑的任务
 
     // 显示任务列表
     function renderTasks() {
@@ -20,8 +21,10 @@ document.addEventListener("DOMContentLoaded", () => {
             const li = document.createElement("li");
             li.innerHTML = `
                 <span>${task.title}（${task.deadline}）</span>
-                <button class="edit-button" data-index="${index}">✎</button>
-                <button class="delete-button" data-index="${index}">🗑️</button>
+                <div class="botton-container">
+                    <button class="edit-button" data-index="${index}">✎</button>
+                    <button class="delete-button" data-index="${index}">🗑️</button>
+                </div>
             `;
             taskList.appendChild(li);
         });
@@ -30,7 +33,25 @@ document.addEventListener("DOMContentLoaded", () => {
     // 添加任务
     createTaskButton.addEventListener("click", () => {
         createTaskModal.style.display = "flex";
+        taskToEdit = null;
+        document.getElementById("task-title").value = "";
+        document.getElementById("task-description").value = "";
+        document.getElementById("task-deadline").value = "";
+        document.getElementById("task-priority").value = "low";
     });
+
+    // 编辑任务
+    taskList.addEventListener("click", (e) => {
+        if (e.target.classList.contains("edit-button")) {
+            taskToEdit = e.target.dataset.index;
+            const task = tasks[taskToEdit];
+            document.getElementById("task-title").value = task.title;
+            document.getElementById("task-description").value = task.description;
+            document.getElementById("task-deadline").value = task.deadline;
+            document.getElementById("task-priority").value = "low";
+            createTaskModal.style.display = "flex";
+        }
+    })
 
     saveTaskButton.addEventListener("click", () => {
         const title = document.getElementById("task-title").value;
@@ -39,7 +60,12 @@ document.addEventListener("DOMContentLoaded", () => {
         const priority = document.getElementById("task-priority").value;
 
         if (title && deadline) {
-            tasks.push({ title, description, deadline, priority });
+            if (taskToEdit !== null){
+                // 更新现有任务
+                tasks[taskToEdit] = { title, description, deadline, priority };
+            } else {
+                tasks.push({ title, description, deadline, priority });
+            }
             renderTasks();
             createTaskModal.style.display = "none";
         } else {

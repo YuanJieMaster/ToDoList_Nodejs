@@ -13,6 +13,7 @@ header {
     display: flex;
     gap: 10px;
     margin-bottom: 20px;
+    justify-content: center;
 }
 
 header input, header button, header select {

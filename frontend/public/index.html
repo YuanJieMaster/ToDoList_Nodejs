@@ -52,19 +52,23 @@
 <!-- 创建任务模态框 -->
 <div id="create-task-modal" class="modal">
     <div class="modal-content">
-        <h2>创建任务</h2>
+        <h2>任务</h2>
         <label for="task-title">任务标题</label>
         <input type="text" id="task-title">
+        <br/>
         <label for="task-description">任务描述</label>
         <textarea id="task-description"></textarea>
+        <br/>
         <label for="task-deadline">截止日期</label>
         <input type="date" id="task-deadline">
+        <br/>
         <label for="task-priority">选择优先级</label>
         <select id="task-priority">
             <option value="low">低</option>
             <option value="medium">中</option>
             <option value="high">高</option>
         </select>
+        <br/>
         <button id="save-task-button">保存</button>
         <button id="cancel-task-button">取消</button>
     </div>
