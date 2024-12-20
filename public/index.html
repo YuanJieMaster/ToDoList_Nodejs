@@ -33,8 +33,8 @@
         <button id="search-button">搜索</button>
         <select id="filter-tasks">
             <option value="all">全部任务</option>
-            <option value="incomplete">未完成任务</option>
-            <option value="complete">已完成任务</option>
+            <option value="pending">未完成任务</option>
+            <option value="completed">已完成任务</option>
         </select>
         <select id="sort-tasks">
             <option value="time">按时间排序</option>
@@ -60,7 +60,7 @@
         <textarea id="task-description"></textarea>
         <br/>
         <label for="task-deadline">截止日期</label>
-        <input type="date" id="task-deadline">
+        <input type="datetime-local" id="task-deadline">
         <br/>
         <label for="task-priority">选择优先级</label>
         <select id="task-priority">
@@ -82,6 +82,6 @@
         <button id="cancel-delete-button">取消</button>
     </div>
 </div>
-<script src="script.js"></script>
+<script src="scripts/script.js"></script>
 </body>
 </html>

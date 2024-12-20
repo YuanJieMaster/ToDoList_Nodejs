@@ -16,7 +16,7 @@
 - **请求参数**：
     - `title`（必填）：任务标题（字符串，最大长度 255）
     - `description`（可选）：任务描述（字符串）
-    - `dueDate`（可选）：任务截止日期（ISO 8601 格式字符串，如：`2024-12-25T12:00:00Z`）
+    - `deadline`（可选）：任务截止日期（ISO 8601 格式字符串，如：`2024-12-25T12:00:00Z`）
     - `status`（可选）：任务状态，默认值为 `pending`（`pending` 或 `completed`）
     - `priority`（可选）：任务优先级（字符串，可选值：`low`，`medium`，`high`）
 - **请求示例**：
@@ -25,7 +25,7 @@
 {
   "title": "完成TODO应用API文档",
   "description": "编写详细的API文档，包含每个功能的请求和响应示例。",
-  "dueDate": "2024-12-10T12:00:00Z",
+  "deadline": "2024-12-10T12:00:00Z",
   "priority": "high"
 }
 ```
@@ -42,7 +42,7 @@
         "id": 1,
         "title": "完成TODO应用API文档",
         "description": "编写详细的API文档，包含每个功能的请求和响应示例。",
-        "dueDate": "2024-12-10T12:00:00Z",
+        "deadline": "2024-12-10T12:00:00Z",
         "status": "pending",
         "priority": "high",
         "createdAt": "2024-11-30T10:00:00Z",
@@ -89,7 +89,7 @@ GET /api/tasks?status=all&priority=high
           "id": 1,
           "title": "完成TODO应用API文档",
           "description": "编写详细的API文档，包含每个功能的请求和响应示例。",
-          "dueDate": "2024-12-10T12:00:00Z",
+          "deadline": "2024-12-10T12:00:00Z",
           "status": "pending",
           "priority": "high",
           "createdAt": "2024-11-30T10:00:00Z",
@@ -118,7 +118,7 @@ GET /api/tasks?status=all&priority=high
 - **请求参数**：
     - `title`（可选）：任务标题
     - `description`（可选）：任务描述
-    - `dueDate`（可选）：任务截止日期
+    - `deadline`（可选）：任务截止日期
     - `status`（可选）：任务状态（`pending` 或 `completed`）
     - `priority`（可选）：任务优先级（`low`、`medium`、`high`）
 - **请求示例**：
@@ -127,7 +127,7 @@ GET /api/tasks?status=all&priority=high
 {
   "title": "更新TODO应用API文档",
   "description": "更新API文档，包含最新的功能描述。",
-  "dueDate": "2024-12-12T12:00:00Z",
+  "deadline": "2024-12-12T12:00:00Z",
   "priority": "medium"
 }
 ```
@@ -144,7 +144,7 @@ GET /api/tasks?status=all&priority=high
         "id": 1,
         "title": "更新TODO应用API文档",
         "description": "更新API文档，包含最新的功能描述。",
-        "dueDate": "2024-12-12T12:00:00Z",
+        "deadline": "2024-12-12T12:00:00Z",
         "status": "pending",
         "priority": "medium",
         "createdAt": "2024-11-30T10:00:00Z",

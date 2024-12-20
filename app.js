@@ -6,6 +6,7 @@ var fs = require("fs");
 var cookieParser = require('cookie-parser')
 var util = require('util');
 var mysql = require('mysql');
+const path = require('path');
 var connection = mysql.createConnection({
     host     : 'localhost',
     user     : 'root',
@@ -16,7 +17,7 @@ var connection = mysql.createConnection({
 connection.connect();
 
 // // 创建任务
-// var  addSql = 'INSERT INTO tasks(title,description,duedate,priority) VALUES(?,?,?,?)';
+// var  addSql = 'INSERT INTO tasks(title,description,deadline,priority) VALUES(?,?,?,?)';
 // var  addSqlParams = ['完成TODO应用API文档', '编写详细的API文档，包含每个功能的请求和响应示例。','2024-12-10 12:34:56', "high"];
 //
 // connection.query(addSql,addSqlParams,function (err, result) {
@@ -47,19 +48,36 @@ connection.connect();
 //     }
 // });
 
-app.use('/public', express.static('public'));
+// app.use('/public', express.static('public'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(multer({ dest: '/tmp/'}).array('image'));
-app.use(cookieParser())
+app.use(express.static(path.join(__dirname, 'public')));
+
+// 展示主页
+app.get("/", function (req, res){
+    res.sendFile(path.join(__dirname, "public/index.html"))
+})
 
 // 主页输出任务列表
-app.get('/tasks', function (req, res) {
+app.get('/api/tasks', function (req, res) {
     console.log("主页请求");
     // 查看所有任务
-    var sql = 'SELECT * FROM tasks';
+    let sql = 'SELECT * FROM tasks';
+    const status = req.query.status;
+    const params = [];
 
-    connection.query(sql, function (error, results, fields) {
+    if (status === "completed") {
+        sql += " WHERE status = ?";
+        params.push("completed");
+    }
+
+    if (status === "pending") {
+        sql += " WHERE status = ?";
+        params.push("pending");
+    }
+
+    connection.query(sql, params, function (error, results, fields) {
         if (error) {
             console.log('[SELECT ERROR] - ', error.message);
             return res.status(500).json({message: "数据库查询出错", error: error.message});
@@ -72,15 +90,48 @@ app.get('/tasks', function (req, res) {
 
         res.json(results);
     });
-    console.log("Cookies: " + util.inspect(req.cookies));
+    // console.log("Cookies: " + util.inspect(req.cookies));
 })
+
+// app.get('/api/tasks/:id', function (req, res) {
+//     console.log("主页请求");
+//     // 查看所有任务
+//     let sql = 'SELECT * FROM tasks';
+//     const status = req.query.status;
+//     const params = [];
+//
+//     if (status === "completed") {
+//         sql += " WHERE status = ?";
+//         params.push("completed");
+//     }
+//
+//     if (status === "pending") {
+//         sql += " WHERE status = ?";
+//         params.push("pending");
+//     }
+//
+//     connection.query(sql, params, function (error, results, fields) {
+//         if (error) {
+//             console.log('[SELECT ERROR] - ', error.message);
+//             return res.status(500).json({message: "数据库查询出错", error: error.message});
+//         }
+//
+//         // 检查结果是否为空
+//         if (results.length == 0){
+//             return res.status(404).json({message: "没有找到任何任务", error: error.message});
+//         }
+//
+//         res.json(results[0]);
+//     });
+//     // console.log("Cookies: " + util.inspect(req.cookies));
+// })
 
 // POST 创建任务
 app.post('/api/tasks', function (req, res) {
     console.log("创建任务请求");
-    var addSql = 'INSERT INTO tasks(title,description,duedate,priority) VALUES(?,?,?,?)';
-    const { title, description, dueDate, priority } = req.body;
-    var addSqlParams = [title, description, dueDate, priority];
+    var addSql = 'INSERT INTO tasks(title,description,deadline,priority) VALUES(?,?,?,?)';
+    const { title, description, deadline, priority } = req.body;
+    var addSqlParams = [title, description, deadline, priority];
     console.log(req.body);
 
     connection.query(addSql,addSqlParams,function (err, result) {
@@ -127,9 +178,8 @@ app.get('/api/tasks', function (req, res) {
 })
 
 // 编辑任务
-// 打开编辑界面
 app.get('/api/tasks/:id', function (req, res) {
-    console.log("打开编辑界面");
+    console.log("编辑任务");
     var sql = 'SELECT * FROM tasks where id = ?';
     const id = req.params.id;
     var sqlParams = [id];
@@ -142,13 +192,14 @@ app.get('/api/tasks/:id', function (req, res) {
         });
     });
 })
+
 // 实现编辑
 app.put('/api/tasks/:id', function (req, res) {
     console.log("查看任务请求");
-    var modSql = 'UPDATE tasks SET title = ?, description = ?, dueDate = ?,priority = ? WHERE id = ?';
-    const { title, description, dueDate, priority } = req.body;
+    var modSql = 'UPDATE tasks SET title = ?, description = ?, deadline = ?,priority = ? WHERE id = ?';
+    const { title, description, deadline, priority } = req.body;
     const id = req.params.id;
-    var modSqlParams = [title, description, dueDate, priority, id];
+    var modSqlParams = [title, description, deadline, priority, id];
     connection.query(modSql,modSqlParams,function (err, result) {
         if(err){
             console.log('[UPDATE ERROR] - ',err.message);
@@ -156,7 +207,7 @@ app.put('/api/tasks/:id', function (req, res) {
         }
         res.send({
             message: 'Task updated successfully',
-            task: { id, title, description, dueDate, priority }  // 返回更新后的任务信息
+            task: { id, title, description, deadline, priority }  // 返回更新后的任务信息
         });
     });
 })
