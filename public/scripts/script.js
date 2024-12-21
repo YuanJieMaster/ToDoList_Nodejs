@@ -1,6 +1,7 @@
 // script.js
 
 document.addEventListener("DOMContentLoaded", () => {
+    console.log("执行");
     const taskList = document.getElementById("task-list");
     const filterTasks = document.getElementById("filter-tasks")
     const createTaskButton = document.getElementById("create-task-button");
@@ -80,7 +81,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
-                console.log('Task created successfully!');
             })
             .then(() => {
                 console.log("任务创建成功");
@@ -93,7 +93,50 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // 向后端发送修改任务请求
+    function updateTask(newTask) {
+        console.log("编辑任务请求");
+        const url = `/api/tasks/${newTask.id}`;
+        console.log(url);
+        fetch(url, {
+            method: "PUT", // 使用 POST 方法
+            headers: {
+                "Content-Type": "application/json", // 指定请求体为 JSON 格式
+            },
+            body: JSON.stringify(newTask), // 将任务对象转换为 JSON 格式
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+            })
+            .then(() => {
+                console.log("任务更新成功");
+                alert("任务已成功更新！");
+            })
+            .catch((error) => {
+                console.error("任务更新失败:", error);
+                alert("任务更新失败，请稍后再试。");
+            });
+    }
 
+    // 向后端发送删除任务请求
+    function deleteTask(id) {
+        console.log("删除任务");
+        const url = `/api/tasks/${id}`;
+        console.log(url);
+        fetch(url, {
+            method: "DELETE",
+        })
+            .then((response) => {
+                console.log("任务删除完成");
+                alert("任务已成功删除！");
+                fetchTasks();
+            })
+            .catch((error) => {
+                console.error("任务删除失败:", error);
+                alert("任务删除失败，请稍后再试。");
+            });
+    }
 
     // 显示任务列表
     function renderTasks() {
@@ -101,7 +144,13 @@ document.addEventListener("DOMContentLoaded", () => {
         tasks.forEach((task, index) => {
             const li = document.createElement("li");
             li.innerHTML = `
-                <span>${task.title}（${formatDateTime(task.deadline)}）</span>
+                <div class="task-content">
+                <span class="task-title">${task.title}</span>
+                <span class="task-deadline">（${formatDateTime(task.deadline)}）</span>
+                <p class="task-description">${task.description || "暂无描述"}</p>
+                <span class="task-priority">优先级：${task.priority}</span>
+                <span class="task-status">${task.status === "completed" ? "✔️ 已完成" : "⏳ 待完成"}</span>
+                </div>
                 <div class="botton-container">
                     <button class="edit-button" data-index="${index}">✎</button>
                     <button class="delete-button" data-index="${index}">🗑️</button>
@@ -137,6 +186,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // 保存按钮 向后端发送创建/修改任务
     saveTaskButton.addEventListener("click", () => {
         console.log("保存按钮被点击");
+        const id = tasks[taskToEdit].id;
         const title = document.getElementById("task-title").value;
         const description = document.getElementById("task-description").value;
         const deadline = document.getElementById("task-deadline").value;
@@ -144,13 +194,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (title && deadline) {
             if (taskToEdit !== null){
-                // 更新现有任务
-                tasks[taskToEdit] = { title, description, deadline, priority };
                 // 校验输入
                 if (!title || !deadline) {
                     alert("任务标题和截止日期是必填项！");
                     return;
                 }
+                // 更新现有任务
+                tasks[taskToEdit] = { id, title, description, deadline, priority };
+                console.log("编辑任务");
+                console.log(taskToEdit);
+                console.log(tasks[taskToEdit]);
+                const newTask = {
+                    id : tasks[taskToEdit].id,
+                    title: title,
+                    description: description,
+                    deadline: deadline,
+                    priority: priority,
+                };
+                updateTask(newTask);
             } else {
                 tasks.push({ title, description, deadline, priority });
                 // 创建任务对象
@@ -185,11 +246,14 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+    // 确认删除按钮
     confirmDeleteButton.addEventListener("click", () => {
         if (taskToDelete !== null) {
+            const temp = tasks[taskToDelete].id;
             tasks.splice(taskToDelete, 1);
             renderTasks();
             deleteModal.style.display = "none";
+            deleteTask(temp);
         }
     });
 

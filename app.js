@@ -89,6 +89,7 @@ app.get('/api/tasks', function (req, res) {
         }
 
         res.json(results);
+        console.log(results);
     });
     // console.log("Cookies: " + util.inspect(req.cookies));
 })
@@ -177,9 +178,9 @@ app.get('/api/tasks', function (req, res) {
     });
 })
 
-// 编辑任务
+// 查询任务
 app.get('/api/tasks/:id', function (req, res) {
-    console.log("编辑任务");
+    console.log("查询任务");
     var sql = 'SELECT * FROM tasks where id = ?';
     const id = req.params.id;
     var sqlParams = [id];
@@ -195,10 +196,11 @@ app.get('/api/tasks/:id', function (req, res) {
 
 // 实现编辑
 app.put('/api/tasks/:id', function (req, res) {
-    console.log("查看任务请求");
+    console.log("编辑任务请求");
     var modSql = 'UPDATE tasks SET title = ?, description = ?, deadline = ?,priority = ? WHERE id = ?';
     const { title, description, deadline, priority } = req.body;
     const id = req.params.id;
+    console.log(id);
     var modSqlParams = [title, description, deadline, priority, id];
     connection.query(modSql,modSqlParams,function (err, result) {
         if(err){
